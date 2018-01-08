@@ -3,6 +3,8 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
+const { generateMessage } = require('./utils/message');
+
 // this will resolve \node-chat-app\server/../public to \node-chat-app\public
 const publicPath = path.join(__dirname, '../public');
 //console.log(__dirname + '../public');
@@ -25,24 +27,12 @@ io.on('connection', (socket) => {
         const createdAt = new Date().getTime();
 
         // socket.emit from Admin text Welcome to the chat app
-        socket.emit('newMessage', {
-            from: 'Admin',
-            text: 'Welcome to the chat app',
-            createdAt
-        });
+        socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
         // socket.broadcast.emit from Admin text New user joined
-        socket.broadcast.emit('newMessage', {
-            from: 'Admin',
-            text: `New user joined ${message.from}`,
-            createdAt
-        });
+        socket.broadcast.emit('newMessage', generateMessage('Admin', `New user joined ${message.from}`));
 
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt
-        });
+        io.emit('newMessage', generateMessage(message.from, message.text));
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,
         //     text: message.text,
