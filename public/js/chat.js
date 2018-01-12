@@ -22,12 +22,15 @@ socket.on('connect', function () {
     //console.log('Connected to server');
     var params = $.deparam(window.location.search);
 
+    params.room = params.room.toLowerCase();
+
     socket.emit('join', params, function (err) {
         if (err) {
             alert(err);
             window.location.href = '/';
         } else {
-            console.log('No error');
+            //console.log('No error');
+            $('#room').text(`Room - ${params.room}`);
         }
     });
 });
@@ -37,8 +40,6 @@ socket.on('disconnect', function () {
 });
 
 socket.on('updateUserList', function (users) {
-    //console.log('Users list', users);
-
     var ol = $('<ol></ol>');
 
     users.forEach(function(user) {
@@ -80,7 +81,6 @@ $('#message-form').on('submit', function (e) {
     const txtMessageTextbox = $('[name=message]');
 
     socket.emit('createMessage', {
-        from: 'User',
         text: txtMessageTextbox.val()
     }, function () {
         // acknowledgement callback
